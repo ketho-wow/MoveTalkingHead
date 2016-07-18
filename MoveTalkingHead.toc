@@ -1,0 +1,8 @@
+## Interface: 70000
+## Version: 1.1
+## Title: MoveTalkingHead
+## Notes: Makes the TalkingHeadFrame movable
+## Author: Ketho @ EU-Boulderfist
+## SavedVariables: MoveTalkingHeadDB
+
+MoveTalkingHead.lua

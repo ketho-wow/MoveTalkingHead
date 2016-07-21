@@ -1,8 +1,9 @@
 ## Interface: 70000
-## Version: 1.1
+## Version: 1.1.1
 ## Title: MoveTalkingHead
-## Notes: Makes the TalkingHeadFrame movable
+## Notes: Makes the message dialog movable
 ## Author: Ketho @ EU-Boulderfist
 ## SavedVariables: MoveTalkingHeadDB
 
+Locales.lua
 MoveTalkingHead.lua

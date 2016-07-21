@@ -1,19 +1,10 @@
-local NAME = ...
+-- Author: Ketho (EU-Boulderfist)
+-- License: Public Domain
+
+local NAME, S = ...
+local L = S.L -- localization
 local f = CreateFrame("Frame")
 local db, THF, model
-
--- update model camera for the new scale
-local function ApplyUICamera()
-	Model_ApplyUICamera(model, model.uiCameraID)
-end
-
- -- distance fix, the face would clip out of the model with smaller scales
-local function ValidateDistance()
-	if db.scale <= .7 then
-		local newScale = db.scale == .5 and 1.06 or 1.03 -- bit crude
-		model:SetCameraDistance(model:GetCameraDistance() * newScale)
-	end
-end
 
 function f:OnEvent(event, addon)
 	if event == "ADDON_LOADED" then
@@ -54,7 +45,6 @@ function f:OnEvent(event, addon)
 			
 			if db.scale then -- set scale
 				THF:SetScale(db.scale)
-				C_Timer.After(.1, ValidateDistance) -- camera is not yet set up
 			end
 		end
 	end
@@ -73,22 +63,21 @@ SlashCmdList.MOVETALKINGHEAD = function(msg)
 	
 	if msg == "reset" then
 		wipe(db)
-		print(format("%s: Settings have been reset", NAME))
+		print(L.RESET)
 		if THF then
 			THF:ClearAllPoints()
 			THF:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 96)
 			THF:SetScale(1)
-			ApplyUICamera()
+			Model_ApplyUICamera(model, model.uiCameraID)
 		end
 	elseif scale and scale <= 2 and scale >= 0.5 then -- sanitize
 		db.scale = scale
-		print(format("%s: Scale is now |cffFFFF00%.2f|r", NAME, scale))
+		print(L.SET:format(scale))
 		if THF then
 			THF:SetScale(db.scale) -- set scale
-			ApplyUICamera()
-			ValidateDistance()
+			Model_ApplyUICamera(model, model.uiCameraID) -- update camera for new scale
 		end
 	else
-		print(format("|cffFF0000%s|r is not in the valid range of [0.50 - 2.00]. Current scale is |cffFFFF00%.2f|r", msg, db.scale))
+		print(L.USAGE:format(msg, "[0.50 - 2.00]"))
 	end
 end

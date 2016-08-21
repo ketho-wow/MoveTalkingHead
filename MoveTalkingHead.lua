@@ -53,6 +53,18 @@ end
 f:RegisterEvent("ADDON_LOADED")
 f:SetScript("OnEvent", f.OnEvent)
 
+-- remove alert anchors; taken from RealUI
+hooksecurefunc(AlertFrame, "AddAlertFrameSubSystem", function(self, alertFrameSubSystem)
+	if alertFrameSubSystem.anchorFrame == TalkingHeadFrame then
+		for i, alertSubSystem in pairs(AlertFrame.alertFrameSubSystems) do
+			if alertFrameSubSystem == alertSubSystem then
+				tremove(AlertFrame.alertFrameSubSystems, i)
+				return 
+			end
+		end
+	end
+end)
+
 -- couldnt make this addon loadondemand because of the slash command
 for i, v in ipairs({"mth", "movetalking", "movetalkinghead"}) do
 	_G["SLASH_MOVETALKINGHEAD"..i] = "/"..v

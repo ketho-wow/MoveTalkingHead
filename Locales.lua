@@ -7,6 +7,9 @@ local L = {
 		USAGE = "%s is not in the valid range of %s",
 	},
 	deDE = {
+		RESET = "Einstellungen wurden zurückgesetzt",
+		SET = "Die momentane Skalierung beträgt %.2f",
+		USAGE = "%s ist nicht im gültigen Bereich von %s",
 	},
 	esES = {
 	},

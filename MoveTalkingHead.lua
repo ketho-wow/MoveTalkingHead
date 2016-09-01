@@ -43,7 +43,7 @@ function f:OnEvent(event, addon)
 			THF:SetScript("OnMouseWheel", function(self, delta)
 				if IsModifierKeyDown() then
 					-- prefer it rounded if that helps anything
-					local scale = round(self:GetScale(), 100) + (0.1 * delta)
+					local scale = round(self:GetScale(), 100) + (0.05 * delta)
 					scale = max(min(scale, 2), 0.5)
 					if db.scale ~= scale then
 						db.scale = scale

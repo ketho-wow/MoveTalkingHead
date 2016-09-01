@@ -2,15 +2,19 @@
 -- License: Public Domain
 
 local NAME, S = ...
-local L = S.L -- localization
+local L = S.L
 local f = CreateFrame("Frame")
 local db, THF, model
+
+local function round(num, q)
+	return floor(num*q + .5) / q
+end
 
 function f:OnEvent(event, addon)
 	if event == "ADDON_LOADED" then
 		if addon == NAME then
 			MoveTalkingHeadDB = MoveTalkingHeadDB or {}
-			db = MoveTalkingHeadDB -- init savedvars
+			db = MoveTalkingHeadDB
 		
 		elseif addon == "Blizzard_TalkingHeadUI" then
 			THF = TalkingHeadFrame
@@ -19,33 +23,45 @@ function f:OnEvent(event, addon)
 			THF:SetMovable(true)
 			THF:SetClampedToScreen(true)
 			THF.ignoreFramePositionManager = true -- important
-			--THF:SetUserPlaced(true) -- doesnt seem to help since its loadondemand
+			--THF:SetUserPlaced(true) -- does not really work with loadondemand frames
 			
 			THF:RegisterForDrag("LeftButton")
-			
 			THF:SetScript("OnDragStart", function(self)
-				if IsModifierKeyDown() then -- ctrl/shift/alt
+				if IsModifierKeyDown() then -- allow ctrl/shift/alt
 					self:StartMoving()
 				end
 			end)
-			
 			THF:SetScript("OnDragStop", function(self)
 				self:StopMovingOrSizing()
 				local point, _, relPoint, dx, dy = self:GetPoint()
-				db.point = point -- save point
+				db.point = point
 				db.relPoint = relPoint
 				db.dx = dx
 				db.dy = dy
 			end)
 			
-			if db.point then -- set point
+			THF:SetScript("OnMouseWheel", function(self, delta)
+				if IsModifierKeyDown() then
+					-- prefer it rounded if that helps anything
+					local scale = round(self:GetScale(), 10) + (0.1 * delta)
+					scale = max(min(scale, 2), 0.5)
+					if db.scale ~= scale then
+						db.scale = scale
+						self:SetScale(scale)
+						Model_ApplyUICamera(model, model.uiCameraID)
+					end
+				end
+			end)
+			
+			if db.point then
 				THF:ClearAllPoints()
 				THF:SetPoint(db.point, nil, db.relPoint, db.dx, db.dy)
 			end
-			
-			if db.scale then -- set scale
+			if db.scale then
 				THF:SetScale(db.scale)
 			end
+			
+			self:UnregisterEvent(event)
 		end
 	end
 end
@@ -82,12 +98,13 @@ SlashCmdList.MOVETALKINGHEAD = function(msg)
 			THF:SetScale(1)
 			Model_ApplyUICamera(model, model.uiCameraID)
 		end
-	elseif scale and scale <= 2 and scale >= 0.5 then -- sanitize
+	elseif scale and scale <= 2 and scale >= 0.5 then
 		db.scale = scale
 		print(L.SET:format(scale))
 		if THF then
-			THF:SetScale(db.scale) -- set scale
-			Model_ApplyUICamera(model, model.uiCameraID) -- update camera for new scale
+			THF:SetScale(db.scale)
+			-- update model camera for new scale
+			Model_ApplyUICamera(model, model.uiCameraID)
 		end
 	else
 		print(L.USAGE:format(msg, "[0.50 - 2.00]"))

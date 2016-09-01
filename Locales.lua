@@ -25,11 +25,15 @@ local L = {
 	},
 	ruRU = {
 	},
-	zhCN = {
-	},
+	--zhCN = {},
 	zhTW = {
+		RESET = "設定已經重置",
+		SET = "目前的縮放大小是 %.2f",
+		USAGE = "%s 不在有效的數字範圍 %s 以內",
 	},
 }
+
+L.zhCN = L.zhTW
 
 S.L = setmetatable(L[GetLocale()] or L.enUS, {__index = function(t, k)
 	local v = rawget(L.enUS, k) or k

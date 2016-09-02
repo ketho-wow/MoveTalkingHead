@@ -11,58 +11,54 @@ local function round(num, q)
 end
 
 function f:OnEvent(event, addon)
-	if event == "ADDON_LOADED" then
-		if addon == NAME then
-			MoveTalkingHeadDB = MoveTalkingHeadDB or {}
-			db = MoveTalkingHeadDB
+	if addon == NAME then
+		MoveTalkingHeadDB = MoveTalkingHeadDB or {}
+		db = MoveTalkingHeadDB
 		
-		elseif addon == "Blizzard_TalkingHeadUI" then
-			THF = TalkingHeadFrame
-			model = THF.MainFrame.Model
-			
-			THF:SetMovable(true)
-			THF:SetClampedToScreen(true)
-			THF.ignoreFramePositionManager = true -- important
-			--THF:SetUserPlaced(true) -- does not really work with loadondemand frames
-			
-			THF:RegisterForDrag("LeftButton")
-			THF:SetScript("OnDragStart", function(self)
-				if IsModifierKeyDown() then -- allow ctrl/shift/alt
-					self:StartMoving()
-				end
-			end)
-			THF:SetScript("OnDragStop", function(self)
-				self:StopMovingOrSizing()
-				local point, _, relPoint, dx, dy = self:GetPoint()
-				db.point = point
-				db.relPoint = relPoint
-				db.dx = dx
-				db.dy = dy
-			end)
-			
-			THF:SetScript("OnMouseWheel", function(self, delta)
-				if IsModifierKeyDown() then
-					-- prefer it rounded if that helps anything
-					local scale = round(self:GetScale(), 100) + (0.05 * delta)
-					scale = max(min(scale, 2), 0.5)
-					if db.scale ~= scale then
-						db.scale = scale
-						self:SetScale(scale)
-						Model_ApplyUICamera(model, model.uiCameraID)
-					end
-				end
-			end)
-			
-			if db.point then
-				THF:ClearAllPoints()
-				THF:SetPoint(db.point, nil, db.relPoint, db.dx, db.dy)
+		THF = TalkingHeadFrame
+		model = THF.MainFrame.Model
+
+		THF:SetMovable(true)
+		THF:SetClampedToScreen(true)
+		THF.ignoreFramePositionManager = true -- important
+		
+		THF:RegisterForDrag("LeftButton")
+		THF:SetScript("OnDragStart", function(self)
+			if IsModifierKeyDown() then -- allow ctrl/shift/alt
+				self:StartMoving() -- calls :SetUserPlaced() but we dont use that
 			end
-			if db.scale then
-				THF:SetScale(db.scale)
+		end)
+		THF:SetScript("OnDragStop", function(self)
+			self:StopMovingOrSizing()
+			local point, _, relPoint, dx, dy = self:GetPoint()
+			db.point = point
+			db.relPoint = relPoint
+			db.dx = dx
+			db.dy = dy
+		end)
+
+		THF:SetScript("OnMouseWheel", function(self, delta)
+			if IsModifierKeyDown() then
+				-- prefer it rounded if that helps anything
+				local scale = round(self:GetScale(), 10^2) + (.05 * delta)
+				scale = max(min(scale, 2), .5)
+				if db.scale ~= scale then
+					db.scale = scale
+					self:SetScale(scale)
+					Model_ApplyUICamera(model, model.uiCameraID)
+				end
 			end
-			
-			self:UnregisterEvent(event)
+		end)
+
+		if db.point then
+			THF:ClearAllPoints()
+			THF:SetPoint(db.point, nil, db.relPoint, db.dx, db.dy)
 		end
+		if db.scale then
+			THF:SetScale(db.scale)
+		end
+		
+		self:UnregisterEvent(event)
 	end
 end
 
@@ -81,12 +77,11 @@ hooksecurefunc(AlertFrame, "AddAlertFrameSubSystem", function(self, alertFrameSu
 	end
 end)
 
--- couldnt make this addon loadondemand because of the slash command
 for i, v in ipairs({"mth", "movetalking", "movetalkinghead"}) do
 	_G["SLASH_MOVETALKINGHEAD"..i] = "/"..v
 end
 
-SlashCmdList.MOVETALKINGHEAD = function(msg)
+function SlashCmdList.MOVETALKINGHEAD(msg)
 	local scale = tonumber(msg)
 	
 	if msg == "reset" then
@@ -98,7 +93,7 @@ SlashCmdList.MOVETALKINGHEAD = function(msg)
 			THF:SetScale(1)
 			Model_ApplyUICamera(model, model.uiCameraID)
 		end
-	elseif scale and scale <= 2 and scale >= 0.5 then
+	elseif scale and scale <= 2 and scale >= .5 then
 		db.scale = scale
 		print(L.SET:format(scale))
 		if THF then

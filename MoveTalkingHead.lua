@@ -39,12 +39,14 @@ function f:OnEvent(event, addon)
 		end)
 		THF:SetScript("OnDragStop", function(self)
 			self:StopMovingOrSizing()
+			if not db.point then
+				RemoveAnchor()
+			end
 			local point, _, relPoint, dx, dy = self:GetPoint()
 			db.point = point
 			db.relPoint = relPoint
 			db.dx = dx
 			db.dy = dy
-			RemoveAnchor()
 		end)
 
 		THF:SetScript("OnMouseWheel", function(self, delta)
@@ -63,7 +65,7 @@ function f:OnEvent(event, addon)
 		if db.point then
 			THF:ClearAllPoints()
 			THF:SetPoint(db.point, nil, db.relPoint, db.dx, db.dy)
-			RemoveAnchor()
+			RemoveAnchor() -- only remove the anchor if the frame has been moved
 		end
 		if db.scale then
 			THF:SetScale(db.scale)

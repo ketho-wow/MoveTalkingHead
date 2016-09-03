@@ -10,6 +10,15 @@ local function round(num, q)
 	return floor(num*q + .5) / q
 end
 
+local function RemoveAnchor()
+	for i, alertSubSystem in pairs(AlertFrame.alertFrameSubSystems) do
+		if alertSubSystem.anchorFrame == THF then
+			tremove(AlertFrame.alertFrameSubSystems, i)
+			return 
+		end
+	end
+end
+
 function f:OnEvent(event, addon)
 	if addon == NAME then
 		MoveTalkingHeadDB = MoveTalkingHeadDB or {}
@@ -35,6 +44,7 @@ function f:OnEvent(event, addon)
 			db.relPoint = relPoint
 			db.dx = dx
 			db.dy = dy
+			RemoveAnchor()
 		end)
 
 		THF:SetScript("OnMouseWheel", function(self, delta)
@@ -53,6 +63,7 @@ function f:OnEvent(event, addon)
 		if db.point then
 			THF:ClearAllPoints()
 			THF:SetPoint(db.point, nil, db.relPoint, db.dx, db.dy)
+			RemoveAnchor()
 		end
 		if db.scale then
 			THF:SetScale(db.scale)
@@ -64,18 +75,6 @@ end
 
 f:RegisterEvent("ADDON_LOADED")
 f:SetScript("OnEvent", f.OnEvent)
-
--- remove alert anchors; taken from RealUI
-hooksecurefunc(AlertFrame, "AddAlertFrameSubSystem", function(self, alertFrameSubSystem)
-	if alertFrameSubSystem.anchorFrame == TalkingHeadFrame then
-		for i, alertSubSystem in pairs(AlertFrame.alertFrameSubSystems) do
-			if alertFrameSubSystem == alertSubSystem then
-				tremove(AlertFrame.alertFrameSubSystems, i)
-				return 
-			end
-		end
-	end
-end)
 
 for i, v in ipairs({"mth", "movetalking", "movetalkinghead"}) do
 	_G["SLASH_MOVETALKINGHEAD"..i] = "/"..v

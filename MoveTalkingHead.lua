@@ -57,6 +57,7 @@ function f:OnEvent(event, addon)
 				if db.scale ~= scale then
 					db.scale = scale
 					self:SetScale(scale)
+					-- update model camera for new scale
 					Model_ApplyUICamera(model, model.uiCameraID)
 				end
 			end
@@ -70,6 +71,9 @@ function f:OnEvent(event, addon)
 		if db.scale then
 			THF:SetScale(db.scale)
 		end
+		if db.lock then
+			THF:EnableMouse(false)
+		end
 		
 		self:UnregisterEvent(event)
 	end
@@ -78,7 +82,7 @@ end
 f:RegisterEvent("ADDON_LOADED")
 f:SetScript("OnEvent", f.OnEvent)
 
-for i, v in ipairs({"mth", "movetalking", "movetalkinghead"}) do
+for i, v in pairs({"th", "mth", "movetalking", "movetalkinghead"}) do
 	_G["SLASH_MOVETALKINGHEAD"..i] = "/"..v
 end
 
@@ -87,22 +91,27 @@ function SlashCmdList.MOVETALKINGHEAD(msg)
 	
 	if msg == "reset" then
 		wipe(db)
+		THF:ClearAllPoints()
+		THF:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 96)
+		THF:SetScale(1)
+		Model_ApplyUICamera(model, model.uiCameraID)
 		print(L.RESET)
-		if THF then
-			THF:ClearAllPoints()
-			THF:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 96)
-			THF:SetScale(1)
-			Model_ApplyUICamera(model, model.uiCameraID)
-		end
-	elseif scale and scale <= 2 and scale >= .5 then
-		db.scale = scale
-		print(L.SET:format(scale))
-		if THF then
+	elseif msg == "lock" then
+		THF:EnableMouse(db.lock)
+		db.lock = not db.lock
+		print(db.lock and L.LOCKED or L.UNLOCKED)
+	elseif scale then
+		if scale <= 2 and scale >= .5 then
+			db.scale = scale
 			THF:SetScale(db.scale)
-			-- update model camera for new scale
 			Model_ApplyUICamera(model, model.uiCameraID)
+			print(L.SET:format(scale))
+		else
+			print(L.ERROR_SCALE:format(msg, "[0.50, 2.00]"))
 		end
 	else
-		print(L.USAGE:format(msg, "[0.50 - 2.00]"))
+		print("/th |cffFFFF00reset|r - "..RESET_TO_DEFAULT)
+		print("/th |cffFFFF00lock|r - "..L.USAGE_LOCK)
+		print("/th |cffFFFF000.9|r - "..L.USAGE_SCALE.." [0.50, 2.00]")
 	end
 end

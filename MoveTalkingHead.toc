@@ -6,6 +6,7 @@
 ## SavedVariables: MoveTalkingHeadDB
 ## LoadOnDemand: 1
 ## LoadWith: Blizzard_TalkingHeadUI
+## Dependencies: Blizzard_TalkingHeadUI
 
 Locales.lua
 MoveTalkingHead.lua

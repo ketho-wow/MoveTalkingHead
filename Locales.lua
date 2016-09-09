@@ -4,9 +4,6 @@ local L = {
 	enUS = {
 		RESET = "Settings have been reset",
 		SET = "Current scale is now %.2f",
-		LOCKED = "The frame is now click-through (noninteractive)",
-		UNLOCKED = "The frame is now catching mouse clicks (interactive)",
-		USAGE_LOCK = "Makes the frame click-through",
 		USAGE_SCALE = "Sets the scale",
 		ERROR_SCALE = "%s is not in the valid range of %s",
 	},

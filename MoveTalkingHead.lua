@@ -34,11 +34,7 @@ function f:OnEvent(event, ...)
 			THF.ignoreFramePositionManager = true -- important
 			
 			THF:RegisterForDrag("LeftButton")
-			THF:SetScript("OnDragStart", function(self)
-				if IsModifierKeyDown() then -- allow ctrl/shift/alt
-					self:StartMoving() -- calls :SetUserPlaced() but we dont use that
-				end
-			end)
+			THF:SetScript("OnDragStart", THF.StartMoving)
 			THF:SetScript("OnDragStop", function(self)
 				self:StopMovingOrSizing()
 				if not db.point then
@@ -53,7 +49,7 @@ function f:OnEvent(event, ...)
 
 			THF:SetScript("OnMouseWheel", function(self, delta)
 				if IsModifierKeyDown() then
-					-- prefer it rounded
+					-- prefer a rounded number from GetScale
 					local scale = round(self:GetScale(), 10^2) + (.05 * delta)
 					scale = max(min(scale, 2), .5)
 					if db.scale ~= scale then
@@ -79,7 +75,7 @@ function f:OnEvent(event, ...)
 		end
 	elseif event == "MODIFIER_STATE_CHANGED" then
 		local key, state = ...
-		if THF:IsShown() then
+		if THF:IsShown() and not THF:IsDragging() then
 			-- click-through for normal clicks
 			THF:EnableMouse(state == 1)
 		end

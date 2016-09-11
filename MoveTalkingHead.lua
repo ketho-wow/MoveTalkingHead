@@ -34,7 +34,11 @@ function f:OnEvent(event, ...)
 			THF.ignoreFramePositionManager = true -- important
 			
 			THF:RegisterForDrag("LeftButton")
-			THF:SetScript("OnDragStart", THF.StartMoving)
+			THF:SetScript("OnDragStart", function(self)
+				if IsModifierKeyDown() then -- allow ctrl/shift/alt
+					self:StartMoving()
+				end
+			end)
 			THF:SetScript("OnDragStop", function(self)
 				self:StopMovingOrSizing()
 				if not db.point then
@@ -111,6 +115,6 @@ function SlashCmdList.MOVETALKINGHEAD(msg)
 		end
 	else
 		print("/th |cffFFFF00reset|r - "..RESET_TO_DEFAULT)
-		print("/th |cffFFFF000.9|r - "..L.USAGE_SCALE.." [0.50, 2.00]")
+		print("/th |cffFFFF000.8|r - "..L.USAGE_SCALE.." [0.50, 2.00]")
 	end
 end

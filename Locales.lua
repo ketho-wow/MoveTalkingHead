@@ -11,6 +11,7 @@ local L = {
 		RESET = "Einstellungen wurden zurückgesetzt",
 		SET = "Die momentane Skalierung beträgt %.2f",
 		ERROR_SCALE = "%s ist nicht im gültigen Bereich von %s",
+		USAGE_SCALE = "Legt die Skalierung fest",
 	},
 	esES = {
 	},

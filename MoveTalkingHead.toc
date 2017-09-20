@@ -1,4 +1,4 @@
-## Interface: 70200
+## Interface: 70300
 ## Version: @project-version@
 ## Title: MoveTalkingHead
 ## Notes: Makes the message dialog movable

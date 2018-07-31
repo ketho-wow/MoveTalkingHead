@@ -1,6 +1,12 @@
 -- Author: Ketho (EU-Boulderfist)
 -- License: Public Domain
 
+if IsAddOnLoaded("ElvUI") then
+	print("|cffFF0000MoveTalkingHead is not compatible with ElvUI|r")
+	DisableAddOn("MoveTalkingHead", true)
+	return
+end
+
 local NAME, S = ...
 local L = S.L
 local f = CreateFrame("Frame")

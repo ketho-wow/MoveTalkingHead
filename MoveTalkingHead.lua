@@ -10,7 +10,10 @@ end
 local NAME, S = ...
 local L = S.L
 local f = CreateFrame("Frame")
-local db, THF, model
+local db
+
+local THF = TalkingHeadFrame -- not sure if TalkingHeadFrame exists right after LoD
+local model = THF.MainFrame.Model
 
 local function round(num, q)
 	return floor(num*q + .5) / q
@@ -37,9 +40,6 @@ function f:OnEvent(event, ...)
 		if addon == NAME then
 			MoveTalkingHeadDB = MoveTalkingHeadDB or {}
 			db = MoveTalkingHeadDB
-			
-			THF = TalkingHeadFrame
-			model = THF.MainFrame.Model
 
 			THF:SetMovable(true)
 			THF:SetClampedToScreen(true)

@@ -1,4 +1,4 @@
-## Interface: 80000
+## Interface: 90001
 ## Version: @project-version@
 ## Title: MoveTalkingHead
 ## Notes: Makes the message dialog movable
@@ -7,6 +7,8 @@
 ## LoadOnDemand: 1
 ## LoadWith: Blizzard_TalkingHeadUI
 ## Dependencies: Blizzard_TalkingHeadUI
+## X-Curse-Project-ID: 101112
+## X-WoWI-ID: 24000
 
 Locales.lua
 MoveTalkingHead.lua
